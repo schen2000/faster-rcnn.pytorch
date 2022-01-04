@@ -31,7 +31,7 @@ from model.rpn.bbox_transform import clip_boxes
 # from model.nms.nms_wrapper import nms
 from model.roi_layers import nms
 from model.rpn.bbox_transform import bbox_transform_inv
-from model.utils.net_utils import save_net, load_net, vis_detections
+from model.utils.net_utils import save_net, load_net, vis_detections, vis_dbg_nms20
 from model.utils.blob import im_list_to_blob
 from model.faster_rcnn.vgg16 import vgg16
 from model.faster_rcnn.resnet import resnet
@@ -333,6 +333,7 @@ if __name__ == '__main__':
       misc_tic = time.time()
       if vis:
           im2show = np.copy(im)
+          im_dbg = np.copy(im) # HW dbg img
       for j in xrange(1, len(pascal_classes)):
           inds = torch.nonzero(scores[:,j]>thresh).view(-1)
           # if there is det
