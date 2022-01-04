@@ -265,6 +265,7 @@ if __name__ == '__main__':
       # Load the demo image
       else:
         im_file = os.path.join(args.image_dir, imglist[num_images])
+        print("  dbg: load img:"+im_file)
         # im = cv2.imread(im_file)
         im_in = np.array(imageio.imread(im_file))
       if len(im_in.shape) == 2:
@@ -298,7 +299,7 @@ if __name__ == '__main__':
 
       scores = cls_prob.data
       boxes = rois.data[:, :, 1:5]
-
+      
       if cfg.TEST.BBOX_REG:
           # Apply bounding-box regression deltas
           box_deltas = bbox_pred.data
@@ -337,7 +338,13 @@ if __name__ == '__main__':
       misc_tic = time.time()
       if vis:
           im2show = np.copy(im)
+      
+          #---- dbg top NMS 20
           im_dbg = np.copy(im) # HW dbg img
+          im_dbg = vis_dbg_nms20(im_dbg, rois)
+          wp = os.path.join(args.out_dir, "dbg", imglist[num_images][:-4] + "_dbg.jpg")
+          cv2.imwrite(wp, im_dbg)
+
       for j in xrange(1, len(pascal_classes)):
           inds = torch.nonzero(scores[:,j]>thresh).view(-1)
           # if there is det
@@ -357,6 +364,7 @@ if __name__ == '__main__':
             cls_dets = cls_dets[keep.view(-1).long()]
             if vis:
               im2show = vis_detections(im2show, pascal_classes[j], cls_dets.cpu().numpy(), 0.5)
+
 
       misc_toc = time.time()
       nms_time = misc_toc - misc_tic
