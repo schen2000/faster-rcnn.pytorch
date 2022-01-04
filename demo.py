@@ -16,6 +16,7 @@ import pprint
 import pdb
 import time
 import cv2
+import imageio
 import torch
 from torch.autograd import Variable
 import torch.nn as nn
@@ -66,6 +67,9 @@ def parse_args():
   parser.add_argument('--image_dir', dest='image_dir',
                       help='directory to load images for demo',
                       default="images")
+  parser.add_argument('--out_dir', dest='out_dir',
+                      help='directory to save det/dbg images ',
+                      default="output")
   parser.add_argument('--cuda', dest='cuda',
                       help='whether use CUDA',
                       action='store_true')
@@ -262,7 +266,7 @@ if __name__ == '__main__':
       else:
         im_file = os.path.join(args.image_dir, imglist[num_images])
         # im = cv2.imread(im_file)
-        im_in = np.array(imread(im_file))
+        im_in = np.array(imageio.imread(im_file))
       if len(im_in.shape) == 2:
         im_in = im_in[:,:,np.newaxis]
         im_in = np.concatenate((im_in,im_in,im_in), axis=2)
@@ -365,7 +369,7 @@ if __name__ == '__main__':
       if vis and webcam_num == -1:
           # cv2.imshow('test', im2show)
           # cv2.waitKey(0)
-          result_path = os.path.join(args.image_dir, imglist[num_images][:-4] + "_det.jpg")
+          result_path = os.path.join(args.out_dir, "det", imglist[num_images][:-4] + "_det.jpg")
           cv2.imwrite(result_path, im2show)
       else:
           im2showRGB = cv2.cvtColor(im2show, cv2.COLOR_BGR2RGB)
