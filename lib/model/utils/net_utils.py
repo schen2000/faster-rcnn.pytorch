@@ -58,8 +58,13 @@ def vis_detections(im, class_name, dets, thresh=0.8):
                         1.0, (0, 0, 255), thickness=1)
     return im
 
+#---- dbg get top score class
+def dbg_get_class(score, pascal_classes):
+    _, order = torch.sort(score, 0, True)
+    return pascal_classes[order[0]]
+
 #---- dbg NMS top 20
-def vis_dbg_nms20(im, rois):
+def vis_dbg_nms20(im, rois, scores, pascal_classes):
     """Visual debugging of detections.(top 20 after NMS)"""
     N=20
     bboxes=rois[0, :N, :]
@@ -71,7 +76,8 @@ def vis_dbg_nms20(im, rois):
         cv2.putText(im, str(i), (bbox[0], bbox[1] + 15), cv2.FONT_HERSHEY_PLAIN,
                 1.0, (0, 0, 255), 1)
         print("  bbox:", bbox)
-
+        cls = dbg_get_class(scores[i], pascal_classes)
+        print("     class:",cls)
     return im
 
 
